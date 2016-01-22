@@ -40,7 +40,9 @@ import static org.webharvest.WHConstants.XMLNS_CORE;
 import static org.webharvest.WHConstants.XMLNS_CORE_10;
 import static org.webharvest.utils.CommonUtil.getBooleanValue;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.HashMap;
@@ -66,6 +68,12 @@ import org.webharvest.runtime.web.HttpResponseWrapper;
 import org.webharvest.utils.CommonUtil;
 import org.webharvest.utils.KeyValuePair;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.inject.Inject;
 
 /**
@@ -145,7 +153,10 @@ public class HttpProcessor extends AbstractProcessor<HttpDef> {
                     httpParams, httpHeaderMap, retryAttempts, retryDelay,
                     retryDelayFactor);
 
-            final long declaredContentLength = res.getContentLength();
+        	
+			
+
+			final long declaredContentLength = res.getContentLength();
             final long actualContentLength;
 
             Variable result;
@@ -159,7 +170,8 @@ public class HttpProcessor extends AbstractProcessor<HttpDef> {
                 LOG.info("Getting response ({} bytes)...",
                         declaredContentLength);
 
-                final byte[] responseBody = res.readBodyAsArray();
+
+				final byte[] responseBody = res.readBodyAsArray();
 
                 final String mimeType = StringUtils
                         .lowerCase(res.getMimeType());
@@ -247,11 +259,11 @@ public class HttpProcessor extends AbstractProcessor<HttpDef> {
             return result;
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (res != null)
-                res.close();
-        }
-
+		} finally {
+			if (res != null)
+				res.close();
+		}
+        
     }
 
     private boolean isTextMimeType(String mimeType) {

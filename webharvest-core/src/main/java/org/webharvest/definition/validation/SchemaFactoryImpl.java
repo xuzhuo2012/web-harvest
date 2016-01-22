@@ -2,6 +2,7 @@ package org.webharvest.definition.validation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -127,6 +128,21 @@ public final class SchemaFactoryImpl implements SchemaFactory, SchemaResolver {
      */
     private void createSchema() {
         try {
+        	Set<Source> sources = getSources();
+        	System.err.println("================================");
+        	System.err.println("================================");
+        	Iterator<Source> iterator = sources.iterator();
+        	while(iterator.hasNext()){
+        		Source source = iterator.next();
+        		System.err.println("============"+source.toString());
+        		System.err.println("============"+source.getSystemId());
+        		System.err.println("============"+source.getClass().getCanonicalName());
+        	}
+        	
+        	System.err.println("================================");
+        	System.err.println("================================");
+        	System.err.println("================================");
+        	
             schema = schemaFactory.newSchema(
                     getSources().toArray(new Source[] {}));
         } catch (SAXException e) {

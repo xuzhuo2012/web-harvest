@@ -74,60 +74,55 @@ public final class ScraperModule extends AbstractModule {
      * {@inheritDoc}
      */
     @Override
-    protected void configure() {
-        bind(ScrapingAwareHelper.class).toInstance(new ScrapingAwareHelper());
-        bindListener(Matchers.any(), new PostConstructListener());
+	protected void configure() {
+		bind(ScrapingAwareHelper.class).toInstance(new ScrapingAwareHelper());
+		bindListener(Matchers.any(), new PostConstructListener());
 
-        // FIXME rbala AbstractRegistry is actually not an abstract (no abstract methods)
-        bind(new TypeLiteral<Registry<Harvester, EventBus>>() {}).
-                toInstance(new LockedRegistry<Harvester, EventBus>(
-                        new AbstractRegistry<Harvester, EventBus>() { }));
+		// FIXME rbala AbstractRegistry is actually not an abstract (no abstract
+		// methods)
+		bind(new TypeLiteral<Registry<Harvester, EventBus>>() {
+		}).toInstance(new LockedRegistry<Harvester, EventBus>(new AbstractRegistry<Harvester, EventBus>() {
+		}));
 
-        bindConstant().annotatedWith(WorkingDir.class).to(workingDir);
+		bindConstant().annotatedWith(WorkingDir.class).to(workingDir);
 
-        bindScope(ScrapingScope.class, SCRAPER_SCOPE);
-        // Make our scope instance injectable
-        bind(ScraperScope.class).toInstance(SCRAPER_SCOPE);
+		bindScope(ScrapingScope.class, SCRAPER_SCOPE);
+		// Make our scope instance injectable
+		bind(ScraperScope.class).toInstance(SCRAPER_SCOPE);
 
-        bindListener(TypeMatchers.subclassesOf(ScrapingAware.class),
-                new ScrapingAwareTypeListener());
+		bindListener(TypeMatchers.subclassesOf(ScrapingAware.class), new ScrapingAwareTypeListener());
 
-        bind(EventBus.class).in(ScrapingScope.class);
-        bindListener(Matchers.any(), new EventBusTypeListener());
-        bind(EventSink.class).to(HarvesterEventSink.class).in(Singleton.class);
+		bind(EventBus.class).in(ScrapingScope.class);
+		bindListener(Matchers.any(), new EventBusTypeListener());
+		bind(EventSink.class).to(HarvesterEventSink.class).in(Singleton.class);
 
-        requestStaticInjection(InjectorHelper.class);
+		requestStaticInjection(InjectorHelper.class);
 
-        bind(ConnectionFactory.class).to(StandaloneConnectionPool.class).in(
-                ScrapingScope.class);
-        bind(WebScraper.class).to(Scraper.class).in(ScrapingScope.class);
+		bind(ConnectionFactory.class).to(StandaloneConnectionPool.class).in(ScrapingScope.class);
+		bind(WebScraper.class).to(Scraper.class).in(ScrapingScope.class);
 
-        bind(AttributeHolder.class).to(ScopeAttributeHolder.class);
+		bind(AttributeHolder.class).to(ScopeAttributeHolder.class);
 
-        bind(Harvest.class).to(DefaultHarvest.class).in(Singleton.class);
-        bind(HandlerHolder.class).to(DefaultHandlerHolder.class).in(
-                Singleton.class);
+		bind(Harvest.class).to(DefaultHarvest.class).in(Singleton.class);
+		bind(HandlerHolder.class).to(DefaultHandlerHolder.class).in(Singleton.class);
 
-        install(new FactoryModuleBuilder().implement(Config.class,
-                XMLConfig.class).build(ConfigFactory.class));
+		install(new FactoryModuleBuilder().implement(Config.class, XMLConfig.class).build(ConfigFactory.class));
 
-        install(new FactoryModuleBuilder().implement(Harvester.class,
-                ScrapingHarvester.class).build(HarvesterFactory.class));
+		install(new FactoryModuleBuilder().implement(Harvester.class, ScrapingHarvester.class)
+				.build(HarvesterFactory.class));
 
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Scraping.class),
-                new ScrapingInterceptor());
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Scraping.class), new ScrapingInterceptor());
 
-        bindDBConnectionFactory();
-        bindScraperContext();
-        bindDebugFileLogger();
-        bindStatusHolder();
+		bindDBConnectionFactory();
+		bindScraperContext();
+		bindDebugFileLogger();
+		bindStatusHolder();
 
-        // FIXME rbala Moved from ConfigModule
-        bind(ScriptEngineFactory.class).to(JSRScriptEngineFactory.class).in(
-                Singleton.class);
-        requestStaticInjection(BaseTemplater.class);
-        bind(RuntimeConfig.class).in(Singleton.class);
-    }
+		// FIXME rbala Moved from ConfigModule
+		bind(ScriptEngineFactory.class).to(JSRScriptEngineFactory.class).in(Singleton.class);
+		requestStaticInjection(BaseTemplater.class);
+		bind(RuntimeConfig.class).in(Singleton.class);
+	}
 
     protected void bindDBConnectionFactory() {
         bind(ConnectionFactory.class).annotatedWith(Names.named("standalone"))

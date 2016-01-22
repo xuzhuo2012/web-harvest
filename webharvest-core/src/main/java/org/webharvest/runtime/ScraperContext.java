@@ -93,11 +93,10 @@ public class ScraperContext implements DynamicScopeContext {
     }
 
     @PostConstruct
-    public void initContext() {
-        setLocalVar("sys", new ScriptingVariable(new SystemUtilities(this)));
-        setLocalVar("http", new ScriptingVariable(
-                httpClientManager.getHttpInfo()));
-    }
+	public void initContext() {
+		setLocalVar("sys", new ScriptingVariable(new SystemUtilities(this)));
+		setLocalVar("http", new ScriptingVariable(httpClientManager.getHttpInfo()));
+	}
 
     public void setLocalVar(String name, Object value) {
         setLocalVar(name, CommonUtil.createVariable(value));

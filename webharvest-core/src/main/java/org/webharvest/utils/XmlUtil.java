@@ -53,50 +53,46 @@ public class XmlUtil {
 
     private static final Map<Integer, SAXParserFactory> saxParserFactoryMap;
 
-    static {
-        /* Resolving core XML schemas for version 1.0, 2.0 and 2.1. */
-        final SchemaResolver schemaResolver =
-            SchemaComponentFactory.getSchemaResolver();
-        schemaResolver.addPostProcessor(
-                new SchemaResourcesPostProcessor<String>(
-                        new TransformerPair<String, URI, SchemaSource>(
-                                new ResourcePathToURITransformer(),
-                                new URIToSchemaSourceTransformer()),
-                        "/config.xsd", "/wh-core-2.0.xsd",
-                        "/wh-core-2.1-loose.xsd",
-                        "/wh-jndi-2.1.xsd"));
-        schemaResolver.refresh();
+	static {
+		/* Resolving core XML schemas for version 1.0, 2.0 and 2.1. */
+		final SchemaResolver schemaResolver = SchemaComponentFactory.getSchemaResolver();
+		schemaResolver.addPostProcessor(new SchemaResourcesPostProcessor<String>(
+				new TransformerPair<String, URI, SchemaSource>(new ResourcePathToURITransformer(),
+						new URIToSchemaSourceTransformer()),
+				"/config.xsd", "/wh-core-2.0.xsd", "/wh-core-2.1.xsd","/wh-core-2.1-loose.xsd", "/wh-jndi-2.1.xsd"));
+		schemaResolver.refresh();
 
+		final HashMap<Integer, SAXParserFactory> map = new HashMap<Integer, SAXParserFactory>();
+		SAXParserFactory factory;
 
-        final HashMap<Integer, SAXParserFactory> map = new HashMap<Integer, SAXParserFactory>();
-        SAXParserFactory factory;
+		// non-validating ns-unaware
+		factory = SAXParserFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(false);
+		map.put(0, factory);
 
-        // non-validating ns-unaware
-        factory = SAXParserFactory.newInstance();
-        factory.setValidating(false);
-        factory.setNamespaceAware(false);
-        map.put(0, factory);
+		// validating ns-unaware
+		/*
+		 * factory = SAXParserFactory.newInstance();
+		 * factory.setValidating(true); factory.setNamespaceAware(false);
+		 * map.put(1, factory);
+		 */
 
-        // validating ns-unaware
-        /*factory = SAXParserFactory.newInstance();
-        factory.setValidating(true);
-        factory.setNamespaceAware(false);
-        map.put(1, factory);*/
+		// non-validating ns-aware
+		factory = SAXParserFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(true);
+		map.put(2, factory);
 
-        // non-validating ns-aware
-        factory = SAXParserFactory.newInstance();
-        factory.setValidating(false);
-        factory.setNamespaceAware(true);
-        map.put(2, factory);
+		// validating ns-aware
+		/*
+		 * factory = SAXParserFactory.newInstance();
+		 * factory.setValidating(true); factory.setNamespaceAware(true);
+		 * map.put(3, factory);
+		 */
 
-        // validating ns-aware
-        /*factory = SAXParserFactory.newInstance();
-        factory.setValidating(true);
-        factory.setNamespaceAware(true);
-        map.put(3, factory);*/
-
-        saxParserFactoryMap = Collections.unmodifiableMap(map);
-    }
+		saxParserFactoryMap = Collections.unmodifiableMap(map);
+	}
 
     private static final ThreadLocal<DocumentBuilder> documentBuilderTL =
             new ThreadLocal<DocumentBuilder>() {

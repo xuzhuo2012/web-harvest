@@ -232,6 +232,20 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  
+  <!-- add by xz -->
+  <xs:element name="html-unit" type="httpElementType">
+    <xs:annotation>
+      <xs:documentation>
+        Sends HTTP request to the specified URL and gets HTTP response as a
+        result. First the body of
+        the processor is executed in order to define optional HTTP parameters
+        and/or headers and then
+        sends HTTP request.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <!-- end add by xz -->
 
   <xs:element name="http-param" type="http-paramElementType">
     <xs:annotation>
